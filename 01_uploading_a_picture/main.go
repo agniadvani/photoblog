@@ -36,6 +36,7 @@ func upload(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost {
 		mf, fh, err := req.FormFile("upimg")
 		check(err)
+		defer mf.Close()
 		ext := strings.Split(fh.Filename, ".")[1]
 		h := sha1.New()
 		io.Copy(h, mf)
@@ -45,6 +46,7 @@ func upload(w http.ResponseWriter, req *http.Request) {
 		path := filepath.Join(wd, "public", "pics", fname)
 		nf, err := os.Create(path)
 		check(err)
+		defer nf.Close()
 		mf.Seek(0, 0)
 		io.Copy(nf, mf)
 		appendValues(w, c, fname)
